@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { PaperAirplaneIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import './Chatbot.scss';
 
 const Chatbot = () => {
@@ -8,6 +9,8 @@ const Chatbot = () => {
   const [ingredients, setIngredients] = useState('');
   const [preferences, setPreferences] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(null); // To track active accordion item
+  const [dishName, setDishName] = useState(''); // To store dish name
 
   const genAI = new GoogleGenerativeAI('AIzaSyALnvr7xp3rNEf21P2QuxNnjvQm_jBjwD0');
 
@@ -18,10 +21,14 @@ const Chatbot = () => {
     try {
       const result = await model.generateContent(prompt);
       const response = await result.response;
-      const text = response.text();
+      const text = await response.text();
       setRecipeData(text);
-      // Add the user query and response to chat history
-      setChatHistory(prevHistory => [...prevHistory, { query: prompt, response: text }]);
+
+      // Extract the dish name from the recipe text before 'Ingredients:'
+      const dish = text.split('Ingredients:')[0].trim().replace(/\*/g, '').trim();
+      setDishName(dish); // Store dish name
+
+      setChatHistory((prev) => [...prev, { query: prompt, response: text, dish: dish }]);
     } catch (error) {
       console.error('Error fetching data:', error);
       setRecipeData('Oops! Something went wrong. Please try again.');
@@ -43,44 +50,83 @@ const Chatbot = () => {
     }
   }, [loading, recipeData]);
 
+  const toggleAccordion = (index) => {
+    setActiveIndex(activeIndex === index ? null : index); // Toggle accordion open/close
+  };
+
   return (
-    <div className="chatbot-container">
-      <h1>Recipe Chatbot</h1>
-      
-      <form onSubmit={handleSubmit}>
-        <div className="row">
-          <div className="col-lg-6">
-          <label htmlFor="ingredients" className="form-label" style={{ fontSize: '24px' }}>Ingredients I have: </label>
-            <input type="text" className="form-control" id="ingredients" value={ingredients} onChange={(e) => setIngredients(e.target.value)} />
+    <div className="chatbot-container max-w-full mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-center py-4 font-bold text-5xl">Recipe Chatbot</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex space-x-4">
+          <div className="flex-1">
+            <label htmlFor="ingredients" className="block font-semibold text-2xl mb-1">Ingredients I have</label>
+            <input
+              type="text"
+              id="ingredients"
+              className="w-full border-2 border-solid border-gray-100 rounded-md px-4 py-2 "
+              value={ingredients}
+              onChange={(e) => setIngredients(e.target.value)}
+              placeholder="e.g., tomatoes, pasta, cheese"
+            />
           </div>
-          <div className="col-lg-6">
-            <label htmlFor="preferences" className="form-label" style={{ fontSize: '24px' }}>Preferences: </label>
-            <input type="text" className="form-control" id="preferences" value={preferences} onChange={(e) => setPreferences(e.target.value)} />
+          <div className="flex-1">
+            <label htmlFor="preferences" className="block font-semibold text-2xl mb-1 ">Preferences</label>
+            <input
+              type="text"
+              id="preferences"
+              className="w-full border-2 border-solid border-gray-100 rounded-md px-4 py-2 "
+              value={preferences}
+              onChange={(e) => setPreferences(e.target.value)}
+              placeholder="e.g., vegetarian, spicy"
+            />
           </div>
         </div>
-        <div className="d-flex justify-content-center mt-3">
-        <button type="submit" className="btn btn-primary" style={{ fontSize: '20px', padding: '10px 20px', backgroundColor: 'green', color: 'white' }}>Submit</button>
+        <div className="text-center flex justify-center">
+          <button
+            type="submit"
+            className="bg-[#53BDE1] hover:bg-sky-600 text-white font-semibold px-3 py-2 rounded-lg flex"
+          >
+            Submit
+            <PaperAirplaneIcon className="h-10 w-10 mx-2 hover:translate-x-2" />
+          </button>
         </div>
       </form>
-      <div className="mt-3" ref={recipeRef}>
-        {loading ? <p>Loading...</p> : (
-          <div>
+
+      <div className="mt-6" ref={recipeRef}>
+        {loading ? (
+          <p className="text-center text-gray-500">Loading...</p>
+        ) : (
+          <div className="bg-blue-50 p-4 rounded-lg">
             {recipeData.split('\n').map((line, index) => (
-              <p key={index}>{line}</p>
+              <p key={index} className="text-gray-700">{line}</p>
             ))}
           </div>
         )}
       </div>
-      
-      {/* Chat History */}
-      <br/>
-      <div className="chat-history">
-        <h2>Chat History</h2>
-        <div className="chat-messages">
+
+      <div className="chat-history mt-8">
+        <h2 className="font-bold text-5xl mb-4 text-center">Chat History</h2>
+        <div className="space-y-4">
           {chatHistory.map((item, index) => (
-            <div className="chat-message" key={index}>
-              <p><strong>User:</strong> {item.query}</p>
-              <p><strong>Chatbot:</strong> {item.response}</p>
+            <div key={index} className='items-center'>
+              <button
+                onClick={() => toggleAccordion(index)}
+                className="w-full text-left py-2 px-4 bg-gray-100 border rounded-md focus:outline-none flex justify-between items-center"
+              >
+                <div className='flex items-center'>
+                  <p className="font-semibold text-blue-600">{item.dish}</p>
+                  <p className="font-semibold text-blue-600 ml-5">
+                    {activeIndex === index ? <EyeSlashIcon className='h-8 w-8 items-center' /> : <EyeIcon className='h-8 w-8 items-center' />}
+                  </p>
+                </div>
+              </button>
+              {activeIndex === index && (
+                <div className="p-4 bg-blue-50 rounded-lg mt-2">
+                  <p className="font-semibold text-blue-600">User: <span className="font-normal text-gray-800">{item.query}</span></p>
+                  <p className="font-semibold text-green-600">Chatbot: <span className="font-normal text-gray-800">{item.response}</span></p>
+                </div>
+              )}
             </div>
           ))}
         </div>
