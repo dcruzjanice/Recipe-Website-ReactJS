@@ -85,7 +85,7 @@ const Chatbot = () => {
         <div className="text-center flex justify-center">
           <button
             type="submit"
-            className="bg-[#53BDE1] hover:bg-sky-600 text-white font-semibold px-3 py-2 rounded-lg flex"
+            className="bg-[#5E72E4] hover:bg-sky-600 text-white font-semibold px-3 py-2 rounded-lg flex"
           >
             Submit
             <PaperAirplaneIcon className="h-10 w-10 mx-2 hover:translate-x-2" />
@@ -123,8 +123,8 @@ const Chatbot = () => {
               </button>
               {activeIndex === index && (
                 <div className="p-4 bg-blue-50 rounded-lg mt-2">
-                  <p className="font-semibold text-blue-600">User: <span className="font-normal text-gray-800">{item.query}</span></p>
-                  <p className="font-semibold text-green-600">Chatbot: <span className="font-normal text-gray-800">{item.response}</span></p>
+                  <p className="font-semibold text-[#5e72e4]">User: <span className="font-normal text-gray-800">{item.query}</span></p>
+                  <p className="font-semibold text-[#2dce89]">Chatbot: <span className="font-normal text-gray-800">{item.response}</span></p>
                 </div>
               )}
             </div>
