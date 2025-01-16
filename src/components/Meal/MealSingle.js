@@ -127,4 +127,4 @@ const MealSingle = ({meal}) => {
   )
 }
 
-export default MealSingle
+export default MealSingle;

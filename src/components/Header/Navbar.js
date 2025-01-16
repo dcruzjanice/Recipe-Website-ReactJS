@@ -36,21 +36,16 @@ const Navbar = () => {
               <span className='navbar-brand-text fw-7'>TasteTrail</span>
             </Link>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-  <div className="flex items-center">
-    <Link to="/favorites" className='navbar-link text-white' style={{ marginRight: '15px', fontSize: '20px' }}>Favorites</Link>
-    <Link to="/meal-planner" className='navbar-link text-white' style={{ marginRight: '15px', fontSize: '20px' }}>Meal Planner</Link>
-    <Link to="/chatbot" className='navbar-link text-white' style={{ marginRight: '10px', fontSize: '20px' }}>Chatbot</Link>
-    <ThemeToggle />
-  </div>
-  <button type="button" className='navbar-show-btn text-white' onClick={() => openSidebar()} style={{ marginBottom: '6px', marginTop: '10px' }}>
-    <IoMdMenu size={27} />
-  </button>
-</div>
-
-
-
-
-        
+              <div className="flex items-center">
+                <Link to="/favorites" className='navbar-link text-white' style={{ marginRight: '15px', fontSize: '20px' }}>Favorites</Link>
+                <Link to="/meal-planner" className='navbar-link text-white' style={{ marginRight: '15px', fontSize: '20px' }}>Meal Planner</Link>
+                <Link to="/chatbot" className='navbar-link text-white' style={{ marginRight: '10px', fontSize: '20px' }}>Chatbot</Link>
+                <ThemeToggle />
+              </div>
+              <button type="button" className='navbar-show-btn text-white' onClick={() => openSidebar()} style={{ marginBottom: '6px', marginTop: '10px' }}>
+                <IoMdMenu size={27} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
